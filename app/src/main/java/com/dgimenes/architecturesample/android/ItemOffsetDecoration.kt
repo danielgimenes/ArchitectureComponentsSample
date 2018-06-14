@@ -1,9 +1,10 @@
-package com.dgimenes.architecturesample
+package com.dgimenes.architecturesample.android
 
 import android.content.Context
 import android.graphics.Rect
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.dgimenes.architecturesample.R
 
 class ItemOffsetDecoration(context: Context) : RecyclerView.ItemDecoration() {
 

@@ -1,8 +1,11 @@
-package com.dgimenes.architecturesample
+package com.dgimenes.architecturesample.movieslist
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import com.dgimenes.architecturesample.R
+import com.dgimenes.architecturesample.android.ItemOffsetDecoration
+import com.dgimenes.architecturesample.data.Movie
 import kotlinx.android.synthetic.main.activity_movie_list.*
 
 class MovieListActivity : AppCompatActivity() {

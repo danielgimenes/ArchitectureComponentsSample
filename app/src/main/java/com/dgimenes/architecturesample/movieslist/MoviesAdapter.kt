@@ -1,10 +1,12 @@
-package com.dgimenes.architecturesample
+package com.dgimenes.architecturesample.movieslist
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.dgimenes.architecturesample.R
+import com.dgimenes.architecturesample.data.Movie
 
 class MoviesAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 

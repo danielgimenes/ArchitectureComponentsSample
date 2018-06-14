@@ -1,4 +1,4 @@
-package com.dgimenes.architecturesample
+package com.dgimenes.architecturesample.data
 
 data class Movie(
         val id: Int,
