@@ -19,6 +19,7 @@ class MovieListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_movie_list)
 
         movieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel::class.java)
+        movieListViewModel.init()
         setupMoviesListUI()
     }
 
