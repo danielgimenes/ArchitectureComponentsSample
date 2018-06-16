@@ -9,6 +9,7 @@ import com.dgimenes.architecturesample.R
 import com.dgimenes.architecturesample.android.ItemOffsetDecoration
 import com.dgimenes.architecturesample.data.Movie
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_movie_list.*
 
@@ -18,7 +19,9 @@ class MovieListActivity : AppCompatActivity() {
 
     private lateinit var movieListViewModel: MovieListViewModel
 
-    private var movies = mutableListOf<Movie>()
+    private val disposables by lazy { CompositeDisposable() }
+
+    private val movies = mutableListOf<Movie>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,23 +31,35 @@ class MovieListActivity : AppCompatActivity() {
         movieListViewModel.init()
         setupMoviesListUI()
 
-        loadPopularMovies()
+        disposables.add(
+                movieListViewModel.loadPopularMovies()
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ movies ->
+                            renderMovies(movies)
+                        }, { error ->
+                            error.printStackTrace()
+                            showError(error)
+                        })
+
+        )
     }
 
-    private fun loadPopularMovies() {
-        movieListViewModel.getMovies()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    movies.clear()
-                    movies.addAll(it)
-                    moviesAdapter.notifyDataSetChanged()
-                }, {
-                    it.printStackTrace()
-                    Toast.makeText(this@MovieListActivity, "Error: ${it.message}", Toast.LENGTH_SHORT)
-                            .show()
-                    // TODO ERROR HANDLING
-                })
+    private fun showError(error: Throwable?) {
+        // TODO BETTER ERROR HANDLING
+        Toast.makeText(this@MovieListActivity, "Error: ${error?.message}", Toast.LENGTH_SHORT)
+                .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.clear()
+    }
+
+    private fun renderMovies(movies: List<Movie>) {
+        this.movies.clear()
+        this.movies.addAll(movies)
+        moviesAdapter.notifyDataSetChanged()
     }
 
     private fun setupMoviesListUI() {

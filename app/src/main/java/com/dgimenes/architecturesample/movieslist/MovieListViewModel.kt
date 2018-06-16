@@ -20,12 +20,11 @@ class MovieListViewModel : ViewModel() {
         moviesWebService = getMoviesWebService()
     }
 
-    fun getMovies(): Observable<List<Movie>> {
-        return moviesWebService.getPopularMovies()
-                .map {
-                    it.results.map { it.toModel() }
-                }
-    }
+    fun loadPopularMovies(): Observable<List<Movie>> =
+            moviesWebService.getPopularMovies()
+                    .map {
+                        it.results.map { it.toModel() }
+                    }
 
 }
 
