@@ -1,5 +1,6 @@
 package com.dgimenes.architecturesample.movieslist
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -8,9 +9,6 @@ import android.widget.Toast
 import com.dgimenes.architecturesample.R
 import com.dgimenes.architecturesample.android.ItemOffsetDecoration
 import com.dgimenes.architecturesample.data.model.Movie
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_movie_list.*
 
 class MovieListActivity : AppCompatActivity() {
@@ -18,8 +16,6 @@ class MovieListActivity : AppCompatActivity() {
     private lateinit var moviesAdapter: MoviesAdapter
 
     private lateinit var movieListViewModel: MovieListViewModel
-
-    private val disposables by lazy { CompositeDisposable() }
 
     private val movies = mutableListOf<Movie>()
 
@@ -31,17 +27,16 @@ class MovieListActivity : AppCompatActivity() {
         movieListViewModel.init()
         setupMoviesListUI()
 
-        disposables.add(
-                movieListViewModel.loadPopularMovies()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ movies ->
-                            renderMovies(movies)
-                        }, { error ->
-                            error.printStackTrace()
-                            showError(error)
-                        })
-
+        movieListViewModel.getPopularMovies().observe(
+                this,
+                Observer<List<Movie>> { movies ->
+                    if (movies == null) {
+                        // TODO BETTER ERROR HANDLING
+                        showError(null)
+                        return@Observer
+                    }
+                    renderMovies(movies)
+                }
         )
     }
 
@@ -49,11 +44,6 @@ class MovieListActivity : AppCompatActivity() {
         // TODO BETTER ERROR HANDLING
         Toast.makeText(this@MovieListActivity, "Error: ${error?.message}", Toast.LENGTH_SHORT)
                 .show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.clear()
     }
 
     private fun renderMovies(movies: List<Movie>) {
