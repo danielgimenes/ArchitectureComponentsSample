@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.dgimenes.architecturesample.R
-import com.dgimenes.architecturesample.data.Movie
+import com.dgimenes.architecturesample.data.model.Movie
 
 class MoviesAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 

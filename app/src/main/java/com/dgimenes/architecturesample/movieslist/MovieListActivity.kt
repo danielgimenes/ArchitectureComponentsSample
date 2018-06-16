@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import com.dgimenes.architecturesample.R
 import com.dgimenes.architecturesample.android.ItemOffsetDecoration
-import com.dgimenes.architecturesample.data.Movie
+import com.dgimenes.architecturesample.data.model.Movie
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
