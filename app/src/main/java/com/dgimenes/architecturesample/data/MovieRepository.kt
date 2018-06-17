@@ -11,11 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MovieRepository {
-
-    private val movieWebService: MovieWebService by lazy {
-        getMoviesWebService()
-    }
+class MovieRepository(val movieWebService: MovieWebService){
 
     fun getPopularMovies(): Observable<List<Movie>> =
             movieWebService.getPopularMovies()

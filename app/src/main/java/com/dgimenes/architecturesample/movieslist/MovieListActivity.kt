@@ -6,12 +6,19 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
+import com.dgimenes.architecturesample.Application
 import com.dgimenes.architecturesample.R
 import com.dgimenes.architecturesample.android.ItemOffsetDecoration
 import com.dgimenes.architecturesample.data.model.Movie
+import com.dgimenes.architecturesample.di.MovieListModule
+import com.dgimenes.architecturesample.di.MovieListViewModelFactory
 import kotlinx.android.synthetic.main.activity_movie_list.*
+import javax.inject.Inject
 
 class MovieListActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var movieListViewModelFactory: MovieListViewModelFactory
 
     private lateinit var moviesAdapter: MoviesAdapter
 
@@ -22,9 +29,11 @@ class MovieListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_list)
+        Application.graphComponent.newMovieListComponent(MovieListModule()).inject(this)
 
-        movieListViewModel = ViewModelProviders.of(this).get(MovieListViewModel::class.java)
-        movieListViewModel.init()
+        movieListViewModel = ViewModelProviders
+                .of(this, movieListViewModelFactory)
+                .get(MovieListViewModel::class.java)
         setupMoviesListUI()
 
         movieListViewModel.getPopularMovies().observe(

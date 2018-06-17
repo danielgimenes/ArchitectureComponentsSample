@@ -9,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class MovieListViewModel : ViewModel() {
+class MovieListViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
     private val disposables by lazy { CompositeDisposable() }
 
@@ -30,12 +30,6 @@ class MovieListViewModel : ViewModel() {
         liveData
     }
 
-    private lateinit var movieRepository: MovieRepository
-
-    fun init() {
-        movieRepository = createMovieRepository()
-    }
-
     fun getPopularMovies(): LiveData<List<Movie>> =
             movies
 
@@ -44,8 +38,4 @@ class MovieListViewModel : ViewModel() {
         disposables.clear()
     }
 
-}
-
-fun createMovieRepository(): MovieRepository {
-    return MovieRepository()
 }
