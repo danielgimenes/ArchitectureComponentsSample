@@ -6,10 +6,10 @@ import com.dgimenes.architecturesample.web.MovieWebService
 import io.reactivex.Maybe
 import io.reactivex.Single
 
-class MovieRepository(private val movieWebService: MovieWebService,
+open class MovieRepository(private val movieWebService: MovieWebService,
                       private val movieDAO: MovieDAO) {
 
-    fun getPopularMovies(): Single<List<Movie>> =
+    open fun getPopularMovies(): Single<List<Movie>> =
             getPopularMoviesFromLocal()
                     .switchIfEmpty(getPopularMoviesFromRemote())
 
