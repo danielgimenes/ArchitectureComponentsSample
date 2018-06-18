@@ -4,12 +4,15 @@ import android.app.Application
 import com.dgimenes.architecturesample.di.BaseGraphComponent
 import com.dgimenes.architecturesample.di.ContextModule
 import com.dgimenes.architecturesample.di.DaggerBaseGraphComponent
+import com.dgimenes.architecturesample.web.MOVIEDB_BASEURL
 
 class Application: Application() {
 
     companion object {
         lateinit var graphComponent: BaseGraphComponent
     }
+
+    var webServerBaseUrl: String = MOVIEDB_BASEURL
 
     override fun onCreate() {
         super.onCreate()
@@ -19,7 +22,7 @@ class Application: Application() {
     private fun setupDIGraph() {
         graphComponent = DaggerBaseGraphComponent
                 .builder()
-                .contextModule(ContextModule(applicationContext))
+                .contextModule(ContextModule(this))
                 .build()
     }
 

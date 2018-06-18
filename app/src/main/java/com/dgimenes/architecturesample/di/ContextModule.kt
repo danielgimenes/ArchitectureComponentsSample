@@ -1,13 +1,16 @@
 package com.dgimenes.architecturesample.di
 
-import android.content.Context
+import com.dgimenes.architecturesample.Application
 import dagger.Module
 import dagger.Provides
 
 @Module
-class ContextModule(private val appContext: Context) {
+class ContextModule(private val application: Application) {
 
     @Provides
-    fun provideAppContext() = appContext
+    fun provideAppContext() = application.applicationContext
+
+    @Provides
+    fun provideApplication() = application
 
 }

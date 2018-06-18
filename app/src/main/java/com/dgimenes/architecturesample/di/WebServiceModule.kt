@@ -1,5 +1,6 @@
 package com.dgimenes.architecturesample.di
 
+import com.dgimenes.architecturesample.Application
 import com.dgimenes.architecturesample.web.MOVIEDB_BASEURL
 import com.dgimenes.architecturesample.web.MovieWebService
 import com.google.gson.Gson
@@ -19,11 +20,11 @@ class WebServiceModule {
             retrofit.create(MovieWebService::class.java)
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(application: Application, okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(Gson()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .baseUrl(MOVIEDB_BASEURL)
+                .baseUrl(application.webServerBaseUrl)
                 .client(okHttpClient)
                 .build()
     }
