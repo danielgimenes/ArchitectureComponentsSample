@@ -1,37 +1,29 @@
 package com.dgimenes.architecturesample.data
 
+import com.dgimenes.architecturesample.data.datasource.MovieDAO
 import com.dgimenes.architecturesample.data.model.Movie
-import com.dgimenes.architecturesample.web.MOVIEDB_BASEURL
 import com.dgimenes.architecturesample.web.MovieWebService
-import com.google.gson.Gson
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import io.reactivex.Observable
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import io.reactivex.Maybe
+import io.reactivex.Single
 
-class MovieRepository(val movieWebService: MovieWebService){
+class MovieRepository(private val movieWebService: MovieWebService,
+                      private val movieDAO: MovieDAO) {
 
-    fun getPopularMovies(): Observable<List<Movie>> =
+    fun getPopularMovies(): Single<List<Movie>> =
+            getPopularMoviesFromLocal()
+                    .switchIfEmpty(getPopularMoviesFromRemote())
+
+    private fun getPopularMoviesFromRemote(): Single<List<Movie>> =
             movieWebService.getPopularMovies()
                     .map {
                         it.results.map { it.toModel() }
                     }
-}
+                    .doOnSuccess { movies ->
+                        movieDAO.saveMovies(movies)
+                    }
 
-fun getMoviesWebService(): MovieWebService {
-    val interceptor = HttpLoggingInterceptor()
-    interceptor.level = HttpLoggingInterceptor.Level.BODY
-    val okHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
-    val gson = Gson()
+    private fun getPopularMoviesFromLocal(): Maybe<List<Movie>> =
+            movieDAO.getMovies()
+                    .filter { it.isNotEmpty() }
 
-    val retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .baseUrl(MOVIEDB_BASEURL)
-            .client(okHttpClient)
-            .build()
-
-    return retrofit.create(MovieWebService::class.java)
 }

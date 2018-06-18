@@ -1,6 +1,7 @@
 package com.dgimenes.architecturesample.di
 
 import com.dgimenes.architecturesample.data.MovieRepository
+import com.dgimenes.architecturesample.data.datasource.MovieDAO
 import com.dgimenes.architecturesample.web.MovieWebService
 import dagger.Module
 import dagger.Provides
@@ -9,7 +10,8 @@ import dagger.Provides
 class RepositoryModule {
 
     @Provides
-    fun provideMovieRepository(movieWebService: MovieWebService) =
-            MovieRepository(movieWebService)
+    fun provideMovieRepository(movieWebService: MovieWebService,
+                               movieDAO: MovieDAO) =
+            MovieRepository(movieWebService, movieDAO)
 
 }
