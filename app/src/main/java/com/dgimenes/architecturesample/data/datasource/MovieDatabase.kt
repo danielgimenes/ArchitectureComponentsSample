@@ -16,13 +16,21 @@ abstract class MovieDatabase : RoomDatabase() {
 
         private var _instance: MovieDatabase? = null
 
-        fun getInstance(appContext: Context): MovieDatabase {
+        fun getInstance(appContext: Context, inMemoryDb: Boolean = false): MovieDatabase {
             if (_instance == null) {
-                _instance = Room.databaseBuilder(
-                        appContext,
-                        MovieDatabase::class.java,
-                        DB_NAME)
-                        .build()
+                _instance =
+                        if (!inMemoryDb) {
+                            Room.databaseBuilder(
+                                    appContext,
+                                    MovieDatabase::class.java,
+                                    DB_NAME
+                            ).build()
+                        } else {
+                            Room.inMemoryDatabaseBuilder(
+                                    appContext,
+                                    MovieDatabase::class.java
+                            ).build()
+                        }
             }
             return _instance!!
         }

@@ -8,6 +8,7 @@ import android.support.test.espresso.matcher.ViewMatchers.withText
 import android.support.test.filters.LargeTest
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
+import com.dgimenes.architecturesample.data.datasource.MovieDatabase
 import com.dgimenes.architecturesample.movieslist.MovieListActivity
 import com.dgimenes.architecturesample.utils.MockWebServerRule
 import com.dgimenes.architecturesample.utils.OkHttpIdlingResourceRule
@@ -43,6 +44,12 @@ class MovieListTest {
     fun setBaseUrl() {
         val app = InstrumentationRegistry.getTargetContext().applicationContext as Application
         app.webServerBaseUrl = mockWebServerRule.server.url("/").toString()
+    }
+
+    @Before
+    fun setupRoom() {
+        val app = InstrumentationRegistry.getTargetContext().applicationContext as Application
+        MovieDatabase.getInstance(app.applicationContext, true)
     }
 
     @Test
