@@ -4,6 +4,7 @@ import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.LiveData
 import com.dgimenes.architecturesample.data.MovieRepository
 import com.dgimenes.architecturesample.data.model.Movie
+import com.dgimenes.architecturesample.data.model.Resource
 import com.dgimenes.architecturesample.movieslist.MovieListViewModel
 import com.dgimenes.architecturesample.utils.RxJavaSchedulersSetupRule
 import io.reactivex.Single
@@ -43,8 +44,8 @@ class MovieListViewModelTest {
         val resultLiveData = viewModel.getPopularMovies()
 
         @Suppress("USELESS_IS_CHECK")
-        assert(resultLiveData is LiveData<List<Movie>>)
-        assertEquals(fakeMovies, resultLiveData.value)
+        assert(resultLiveData is LiveData<Resource<List<Movie>>>)
+        assertEquals(fakeMovies, resultLiveData.value!!.data)
     }
 
 }

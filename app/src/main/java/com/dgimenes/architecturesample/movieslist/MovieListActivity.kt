@@ -5,11 +5,13 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import android.widget.Toast
 import com.dgimenes.architecturesample.Application
 import com.dgimenes.architecturesample.R
 import com.dgimenes.architecturesample.android.ItemOffsetDecoration
 import com.dgimenes.architecturesample.data.model.Movie
+import com.dgimenes.architecturesample.data.model.Resource
 import com.dgimenes.architecturesample.di.MovieListModule
 import com.dgimenes.architecturesample.di.MovieListViewModelFactory
 import kotlinx.android.synthetic.main.activity_movie_list.*
@@ -38,24 +40,36 @@ class MovieListActivity : AppCompatActivity() {
 
         movieListViewModel.getPopularMovies().observe(
                 this,
-                Observer<List<Movie>> { movies ->
-                    if (movies == null) {
-                        // TODO BETTER ERROR HANDLING
+                Observer<Resource<List<Movie>>> { moviesResource ->
+                    if (moviesResource == null) {
                         showError(null)
                         return@Observer
                     }
-                    renderMovies(movies)
+                    when (moviesResource.loadingState) {
+                        LoadingState.LOADING -> showLoading()
+                        LoadingState.SUCCESS -> renderMovies(moviesResource.data)
+                        LoadingState.ERROR -> showError(moviesResource.errorMessage)
+                    }
                 }
         )
     }
 
-    private fun showError(error: Throwable?) {
-        // TODO BETTER ERROR HANDLING
-        Toast.makeText(this@MovieListActivity, "Error: ${error?.message}", Toast.LENGTH_SHORT)
+    private fun showLoading() {
+        loading_progressbar.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading() {
+        loading_progressbar.visibility = View.GONE
+    }
+
+    private fun showError(error: String?) {
+        hideLoading()
+        Toast.makeText(this@MovieListActivity, "Error: $error", Toast.LENGTH_SHORT)
                 .show()
     }
 
     private fun renderMovies(movies: List<Movie>) {
+        hideLoading()
         this.movies.clear()
         this.movies.addAll(movies)
         moviesAdapter.notifyDataSetChanged()
